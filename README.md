@@ -6,7 +6,7 @@
 
 A production-grade, mathematically robust, targetless 3D hand-eye calibration utility implemented in Python. 
 
-This utility computes the static, high-precision rigid coordinate transformation ($T_C^R \in \mathrm{SE}(3)$) between a **camera's coordinate frame** and a **robot's base coordinate frame** without requiring chessboards, circle grids, or external calibration artifacts. It is based on the single-shot physical pointer touch-off methodology published in MDPI's *"Stereo-Based Single-Shot Hand-to-Eye Calibration for Robot Arms"* and incorporates structural reference frames from arXiv's *"3D Hand-Eye Calibration for Collaborative Robot Arm: Look at Robot Base Once"*.
+This utility computes the static, high-precision rigid coordinate transformation $(T_C^R \in \mathrm{SE}(3))$ between a **camera's coordinate frame** and a **robot's base coordinate frame** without requiring chessboards, circle grids, or external calibration artifacts. It is based on the single-shot physical pointer touch-off methodology published in MDPI's *"Stereo-Based Single-Shot Hand-to-Eye Calibration for Robot Arms"* and incorporates structural reference frames from arXiv's *"3D Hand-Eye Calibration for Collaborative Robot Arm: Look at Robot Base Once"*.
 
 ---
 
@@ -77,7 +77,7 @@ The calibration problem establishes a closed kinematic chain by composing homoge
        +--------------------+
 ```
 
-### 1. Generating a Local Orthonormal Coordinate Frame ($\{W\}$)
+### 1. Generating a Local Orthonormal Coordinate Frame $(\{W\})$
 Let $P_1, P_2, P_3 \in \mathbb{R}^3$ be three non-collinear physical coordinates. We define a local, right-handed 3D coordinate system (referred to as the "World Frame" $\{W\}$) with its origin at $P_1$:
 1.  **Displacement Vectors**:
     $$\vec{v}_x = P_2 - P_1$$
@@ -89,19 +89,19 @@ Let $P_1, P_2, P_3 \in \mathbb{R}^3$ be three non-collinear physical coordinates
     $$\mathrm{If\ } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \mathrm{Collinear\ (Error)}$$
 
 3.  **Orthonormal Basis Unit Vectors**:
-    *   **Unit X-axis** ($\hat{x}$): Directed along the line from $P_1$ to $P_2$:
+    *   **Unit X-axis** $(\hat{x})$: Directed along the line from $P_1$ to $P_2$:
         $$\hat{x} = \frac{\vec{v}_x}{\|\vec{v}_x\|_2}$$
-    *   **Unit Z-axis** ($\hat{z}$): Perpendicular to the plane defined by the three points:
+    *   **Unit Z-axis** $(\hat{z})$: Perpendicular to the plane defined by the three points:
         $$\hat{z} = \frac{\vec{n}_{cross}}{\|\vec{n}_{cross}\|_2}$$
-    *   **Unit Y-axis** ($\hat{y}$): Orthogonalized completing the right-handed Cartesian coordinate system:
+    *   **Unit Y-axis** $(\hat{y})$: Orthogonalized completing the right-handed Cartesian coordinate system:
         $$\hat{y} = \hat{z} \times \hat{x}$$
 
-4.  **Homogeneous Transformation Matrix ($T \in \mathrm{SE}(3)$)**:
+4.  **Homogeneous Transformation Matrix $(T \in \mathrm{SE}(3))$**:
     By stacking the unit vectors as column vectors of the rotation matrix $R \in \mathrm{SO}(3)$ and assigning the origin point $P_1$ as the translation vector $t \in \mathbb{R}^3$:
     $$R = \begin{bmatrix} \hat{x} & \hat{y} & \hat{z} \end{bmatrix}_{3 \times 3}, \quad t = P_1$$
     $$T = \begin{bmatrix} R & t \\ \mathbf{0}_{1 \times 3} & 1 \end{bmatrix}_{4 \times 4}$$
 
-### 2. Solving for Camera-to-Robot Frame Transformation ($T_C^R$)
+### 2. Solving for Camera-to-Robot Frame Transformation $(T_C^R)$
 Using the above formulation, the script calculates:
 *   $T_W^C$: The transformation from the workspace local frame $\{W\}$ to the camera frame $\{C\}$ (calculated using 3D camera measurements $\vec{p}_1, \vec{p}_2, \vec{p}_3$).
 *   $T_W^R$: The transformation from the workspace local frame $\{W\}$ to the robot base frame $\{R\}$ (calculated using robot controller coordinates $\vec{q}_1, \vec{q}_2, \vec{q}_3$).
@@ -180,7 +180,7 @@ sequenceDiagram
 
 ---
 
-## Code Architecture Walkthrough
+## 💻 Code Architecture Walkthrough
 
 The utility is structured as a single self-contained, lightweight Python module (`targetless_calibration.py`) built strictly on top of standard scientific libraries (`numpy`). This makes it highly portable and easy to integrate into larger ROS, ROS 2, or industrial software pipelines.
 
@@ -209,9 +209,9 @@ To verify the mathematical accuracy of the script before executing it on your ow
 
 | Point | Camera Coordinates (ZED2i Frame, mm) | Robot Base Coordinates (UR10e Frame, mm) | Description |
 | :---: | :---: | :---: | :---: |
-| **$P_1$** | `[-56.76, -105.9, 490.43]` | `[825.0, -473.0, 13.0]` | **Origin of Workspace Frame ($P_1$)** |
-| **$P_2$** | `[216.03, -102.55, 481.86]` | `[1055.53, -326.87, 13.0]` | **Defines Workspace X-Axis ($P_2$)** |
-| **$P_3$** | `[-59.12, 88.58, 494.7]` | `[929.18, -637.29, 14.0]` | **Defines Workspace Y-Plane ($P_3$)** |
+| **$P_1$** | `[-56.76, -105.9, 490.43]` | `[825.0, -473.0, 13.0]` | **Origin of Workspace Frame $(P_1)$** |
+| **$P_2$** | `[216.03, -102.55, 481.86]` | `[1055.53, -326.87, 13.0]` | **Defines Workspace X-Axis $(P_2)$** |
+| **$P_3$** | `[-59.12, 88.58, 494.7]` | `[929.18, -637.29, 14.0]` | **Defines Workspace Y-Plane $(P_3)$** |
 | **$P_{10}$** | `[137.27, -25.48, 487.02]` | `[1032.0, -434.0, 13.0]` | **Validation Point (Generalization Test)** |
 
 ### Execute the Self-Test
@@ -224,7 +224,7 @@ python3 targetless_calibration.py --test
 ### Self-Test Analysis & Results
 The script computes the camera-to-robot transform and provides direct validation metrics:
 
-*   **Calculated Transformation Matrix ($T_C^R$)**:
+*   **Calculated Transformation Matrix $(T_C^R)$**:
     ```text
     [[ 0.838011  0.545521 -0.012027  936.234684]
      [ 0.544731 -0.837672 -0.039672 -511.334050]
