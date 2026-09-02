@@ -194,7 +194,7 @@ The utility is structured as a single self-contained, lightweight Python module 
 2.  **`calibrate_camera_to_robot(cam_points, robot_points)`**:
     *   Validates point counts (exactly 3 required).
     *   Assembles $T_W^C$ and $T_W^R$.
-    *   Evaluates $T_C^R = T_W^R \cdot T_W^C^{-1}$.
+    *   Evaluates $T_C^R = T_W^R \cdot {T_W^C}^{-1}$.
 3.  **`run_self_test()`**:
     *   Contains full test coordinates sourced from MDPI experimental data.
     *   Computes the transformation matrix.
