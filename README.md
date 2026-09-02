@@ -1,4 +1,4 @@
-# Targetless 3D Hand-Eye Calibration Utility 🤖📸
+# Targetless 3D Hand-Eye Calibration Utility
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
@@ -6,7 +6,7 @@
 
 A production-grade, mathematically robust, targetless 3D hand-eye calibration utility implemented in Python. 
 
-This utility computes the static, high-precision rigid coordinate transformation ($T_C^R \in \text{SE}(3)$) between a **camera's coordinate frame** and a **robot's base coordinate frame** without requiring chessboards, circle grids, or external calibration artifacts. It is based on the single-shot physical pointer touch-off methodology published in MDPI's *"Stereo-Based Single-Shot Hand-to-Eye Calibration for Robot Arms"* and incorporates structural reference frames from arXiv's *"3D Hand-Eye Calibration for Collaborative Robot Arm: Look at Robot Base Once"*.
+This utility computes the static, high-precision rigid coordinate transformation ($T_C^R \in \mathrm{SE}(3)$) between a **camera's coordinate frame** and a **robot's base coordinate frame** without requiring chessboards, circle grids, or external calibration artifacts. It is based on the single-shot physical pointer touch-off methodology published in MDPI's *"Stereo-Based Single-Shot Hand-to-Eye Calibration for Robot Arms"* and incorporates structural reference frames from arXiv's *"3D Hand-Eye Calibration for Collaborative Robot Arm: Look at Robot Base Once"*.
 
 ---
 
@@ -55,7 +55,7 @@ By measuring these points relative to the camera frame (using a stereo or 3D dep
 
 ---
 
-## ➗ Mathematical Foundations
+## Mathematical Foundations
 
 The calibration problem establishes a closed kinematic chain by composing homogeneous transformation matrices.
 
@@ -86,7 +86,7 @@ Let $P_1, P_2, P_3 \in \mathbb{R}^3$ be three non-collinear physical coordinates
 2.  **Collinearity Safeguard**:
     The cross product between $\vec{v}_x$ and $\vec{v}_{y'}$ determines collinearity. If the norm of the cross product approaches zero, the points lie on a straight line, and a unique 3D coordinate system cannot be resolved:
     $$\vec{n}_{cross} = \vec{v}_x \times \vec{v}_{y'}$$
-    $$\text{If } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \text{Collinear (Error)}$$
+    $$\mathrm{If\ } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \mathrm{Collinear\ (Error)}$$
 
 3.  **Orthonormal Basis Unit Vectors**:
     *   **Unit X-axis** ($\hat{x}$): Directed along the line from $P_1$ to $P_2$:
@@ -96,8 +96,8 @@ Let $P_1, P_2, P_3 \in \mathbb{R}^3$ be three non-collinear physical coordinates
     *   **Unit Y-axis** ($\hat{y}$): Orthogonalized completing the right-handed Cartesian coordinate system:
         $$\hat{y} = \hat{z} \times \hat{x}$$
 
-4.  **Homogeneous Transformation Matrix ($T \in \text{SE}(3)$)**:
-    By stacking the unit vectors as column vectors of the rotation matrix $R \in \text{SO}(3)$ and assigning the origin point $P_1$ as the translation vector $t \in \mathbb{R}^3$:
+4.  **Homogeneous Transformation Matrix ($T \in \mathrm{SE}(3)$)**:
+    By stacking the unit vectors as column vectors of the rotation matrix $R \in \mathrm{SO}(3)$ and assigning the origin point $P_1$ as the translation vector $t \in \mathbb{R}^3$:
     $$R = \begin{bmatrix} \hat{x} & \hat{y} & \hat{z} \end{bmatrix}_{3 \times 3}, \quad t = P_1$$
     $$T = \begin{bmatrix} R & t \\ \mathbf{0}_{1 \times 3} & 1 \end{bmatrix}_{4 \times 4}$$
 
@@ -114,7 +114,7 @@ $$T_C^R = T_W^R \cdot (T_W^C)^{-1}$$
 
 ---
 
-## 📐 Architecture and Coordinate Frames
+## Architecture and Coordinate Frames
 
 The relationship between coordinate frames and the closed kinematic loop is illustrated below:
 
@@ -144,7 +144,7 @@ graph TD
 
 ---
 
-## 🔄 Calibration Pipeline Workflow
+## Calibration Pipeline Workflow
 
 This targetless workflow can be executed in a few simple physical steps, followed by immediate mathematical resolution:
 
@@ -180,7 +180,7 @@ sequenceDiagram
 
 ---
 
-## 💻 Code Architecture Walkthrough
+## Code Architecture Walkthrough
 
 The utility is structured as a single self-contained, lightweight Python module (`targetless_calibration.py`) built strictly on top of standard scientific libraries (`numpy`). This makes it highly portable and easy to integrate into larger ROS, ROS 2, or industrial software pipelines.
 
@@ -203,7 +203,7 @@ The utility is structured as a single self-contained, lightweight Python module 
 
 ---
 
-## 🧪 Self-Test and Validation
+## Self-Test and Validation
 
 To verify the mathematical accuracy of the script before executing it on your own hardware, run the built-in self-test suite. This test loads the exact coordinate dataset from Table 2 of the MDPI paper:
 
@@ -236,7 +236,7 @@ The script computes the camera-to-robot transform and provides direct validation
 
 ---
 
-## 🛠️ Production Usage Guide
+## Production Usage Guide
 
 ### Step 1: Prepare Your Point Map JSON File
 Generate a JSON configuration file containing your 3 camera-based measurements and corresponding 3 robot-based measurements. Name it `points.json`:
@@ -289,7 +289,7 @@ The output JSON (`results.json`) stores the computed homogeneous matrix, the tra
 
 ---
 
-## ⚡ ROS 2 TF2 Dynamic Broadcaster Integration
+## ROS 2 TF2 Dynamic Broadcaster Integration
 
 To dynamically integrate this solved transformation into a collaborative ROS 2 pipeline (Humble, Iron, or Jazzy), you can wrap the mathematical output into a TF2 static transform publisher node.
 
