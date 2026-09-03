@@ -80,26 +80,55 @@ The calibration problem establishes a closed kinematic chain by composing homoge
 ### 1. Generating a Local Orthonormal Coordinate Frame $(\{W\})$
 Let $P_1, P_2, P_3 \in \mathbb{R}^3$ be three non-collinear physical coordinates. We define a local, right-handed 3D coordinate system (referred to as the "World Frame" $\{W\}$) with its origin at $P_1$:
 1.  **Displacement Vectors**:
-    $$\vec{v}_x = P_2 - P_1$$
-    $$\vec{v}_{y'} = P_3 - P_1$$
+
+    $$
+    \vec{v}_x = P_2 - P_1
+    $$
+
+    $$
+    \vec{v}_{y'} = P_3 - P_1
+    $$
 
 2.  **Collinearity Safeguard**:
     The cross product between $\vec{v}_x$ and $\vec{v}_{y'}$ determines collinearity. If the norm of the cross product approaches zero, the points lie on a straight line, and a unique 3D coordinate system cannot be resolved:
-    $$\vec{n}_{cross} = \vec{v}_x \times \vec{v}_{y'}$$
-    $$\mathrm{If\ } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \mathrm{Collinear\ (Error)}$$
+
+    $$
+    \vec{n}_{cross} = \vec{v}_x \times \vec{v}_{y'}
+    $$
+
+    $$
+    \mathrm{If\ } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \mathrm{Collinear\ (Error)}
+    $$
 
 3.  **Orthonormal Basis Unit Vectors**:
     *   **Unit X-axis** $(\hat{x})$: Directed along the line from $P_1$ to $P_2$:
-        $$\hat{x} = \frac{\vec{v}_x}{\|\vec{v}_x\|_2}$$
+
+        $$
+        \hat{x} = \frac{\vec{v}_x}{\|\vec{v}_x\|_2}
+        $$
+
     *   **Unit Z-axis** $(\hat{z})$: Perpendicular to the plane defined by the three points:
-        $$\hat{z} = \frac{\vec{n}_{cross}}{\|\vec{n}_{cross}\|_2}$$
+
+        $$
+        \hat{z} = \frac{\vec{n}_{cross}}{\|\vec{n}_{cross}\|_2}
+        $$
+
     *   **Unit Y-axis** $(\hat{y})$: Orthogonalized completing the right-handed Cartesian coordinate system:
-        $$\hat{y} = \hat{z} \times \hat{x}$$
+
+        $$
+        \hat{y} = \hat{z} \times \hat{x}
+        $$
 
 4.  **Homogeneous Transformation Matrix $(T \in \mathrm{SE}(3))$**:
     By stacking the unit vectors as column vectors of the rotation matrix $R \in \mathrm{SO}(3)$ and assigning the origin point $P_1$ as the translation vector $t \in \mathbb{R}^3$:
-    $$R = \begin{bmatrix} \hat{x} & \hat{y} & \hat{z} \end{bmatrix}_{3 \times 3}, \quad t = P_1$$
-    $$T = \begin{bmatrix} R & t \\ \mathbf{0}_{1 \times 3} & 1 \end{bmatrix}_{4 \times 4}$$
+
+    $$
+    R = \begin{bmatrix} \hat{x} & \hat{y} & \hat{z} \end{bmatrix}_{3 \times 3}, \quad t = P_1
+    $$
+
+    $$
+    T = \begin{bmatrix} R & t \\ \mathbf{0}_{1 \times 3} & 1 \end{bmatrix}_{4 \times 4}
+    $$
 
 ### 2. Solving for Camera-to-Robot Frame Transformation $(T_C^R)$
 Using the above formulation, the script calculates:
@@ -107,10 +136,16 @@ Using the above formulation, the script calculates:
 *   $T_W^R$: The transformation from the workspace local frame $\{W\}$ to the robot base frame $\{R\}$ (calculated using robot controller coordinates $\vec{q}_1, \vec{q}_2, \vec{q}_3$).
 
 Since the physical features are static, we compose the closed-loop coordinate transform:
-$$T_W^R = T_C^R \cdot T_W^C$$
+
+$$
+T_W^R = T_C^R \cdot T_W^C
+$$
 
 To isolate and solve for the unknown static transformation $T_C^R$, we post-multiply by the matrix inverse of $T_W^C$:
-$$T_C^R = T_W^R \cdot (T_W^C)^{-1}$$
+
+$$
+T_C^R = T_W^R \cdot (T_W^C)^{-1}
+$$
 
 ---
 
@@ -180,7 +215,7 @@ sequenceDiagram
 
 ---
 
-## 💻 Code Architecture Walkthrough
+## Code Architecture Walkthrough
 
 The utility is structured as a single self-contained, lightweight Python module (`targetless_calibration.py`) built strictly on top of standard scientific libraries (`numpy`). This makes it highly portable and easy to integrate into larger ROS, ROS 2, or industrial software pipelines.
 
