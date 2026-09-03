@@ -10,7 +10,7 @@ This utility computes the static, high-precision rigid coordinate transformation
 
 ---
 
-## 🚀 Quick Start & Installation
+## Quick Start & Installation
 
 ```bash
 # Clone the repository
@@ -79,56 +79,59 @@ The calibration problem establishes a closed kinematic chain by composing homoge
 
 ### 1. Generating a Local Orthonormal Coordinate Frame $(\{W\})$
 Let $P_1, P_2, P_3 \in \mathbb{R}^3$ be three non-collinear physical coordinates. We define a local, right-handed 3D coordinate system (referred to as the "World Frame" $\{W\}$) with its origin at $P_1$:
-1.  **Displacement Vectors**:
+**1. Displacement Vectors:**
 
-    ```math
-    \vec{v}_x = P_2 - P_1
-    ```
+$$
+\vec{v}_x = P_2 - P_1
+$$
 
-    ```math
-    \vec{v}_{y'} = P_3 - P_1
-    ```
+$$
+\vec{v}_{y'} = P_3 - P_1
+$$
 
-2.  **Collinearity Safeguard**:
-    The cross product between $\vec{v}_x$ and $\vec{v}_{y'}$ determines collinearity. If the norm of the cross product approaches zero, the points lie on a straight line, and a unique 3D coordinate system cannot be resolved:
+**2. Collinearity Safeguard:**
 
-    ```math
-    \vec{n}_{cross} = \vec{v}_x \times \vec{v}_{y'}
-    ```
+The cross product between $\vec{v}_x$ and $\vec{v}_{y'}$ determines collinearity. If the norm of the cross product approaches zero, the points lie on a straight line, and a unique 3D coordinate system cannot be resolved:
 
-    ```math
-    \mathrm{If\ } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \mathrm{Collinear\ (Error)}
-    ```
+$$
+\vec{n}_{cross} = \vec{v}_x \times \vec{v}_{y'}
+$$
 
-3.  **Orthonormal Basis Unit Vectors**:
-    *   **Unit X-axis** $(\hat{x})$: Directed along the line from $P_1$ to $P_2$:
+$$
+\mathrm{If\ } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \mathrm{Collinear\ (Error)}
+$$
 
-        ```math
-        \hat{x} = \frac{\vec{v}_x}{\|\vec{v}_x\|_2}
-        ```
+**3. Orthonormal Basis Unit Vectors:**
 
-    *   **Unit Z-axis** $(\hat{z})$: Perpendicular to the plane defined by the three points:
+**Unit X-axis** $(\hat{x})$ — Directed along the line from $P_1$ to $P_2$:
 
-        ```math
-        \hat{z} = \frac{\vec{n}_{cross}}{\|\vec{n}_{cross}\|_2}
-        ```
+$$
+\hat{x} = \frac{\vec{v}_x}{\|\vec{v}_x\|_2}
+$$
 
-    *   **Unit Y-axis** $(\hat{y})$: Orthogonalized completing the right-handed Cartesian coordinate system:
+**Unit Z-axis** $(\hat{z})$ — Perpendicular to the plane defined by the three points:
 
-        ```math
-        \hat{y} = \hat{z} \times \hat{x}
-        ```
+$$
+\hat{z} = \frac{\vec{n}_{cross}}{\|\vec{n}_{cross}\|_2}
+$$
 
-4.  **Homogeneous Transformation Matrix $(T \in \mathrm{SE}(3))$**:
-    By stacking the unit vectors as column vectors of the rotation matrix $R \in \mathrm{SO}(3)$ and assigning the origin point $P_1$ as the translation vector $t \in \mathbb{R}^3$:
+**Unit Y-axis** $(\hat{y})$ — Orthogonalized completing the right-handed Cartesian coordinate system:
 
-    ```math
-    R = \begin{bmatrix} \hat{x} & \hat{y} & \hat{z} \end{bmatrix}_{3 \times 3}, \quad t = P_1
-    ```
+$$
+\hat{y} = \hat{z} \times \hat{x}
+$$
 
-    ```math
-    T = \begin{bmatrix} R & t \\ \mathbf{0}_{1 \times 3} & 1 \end{bmatrix}_{4 \times 4}
-    ```
+**4. Homogeneous Transformation Matrix** $(T \in \mathrm{SE}(3))$:
+
+By stacking the unit vectors as column vectors of the rotation matrix $R \in \mathrm{SO}(3)$ and assigning the origin point $P_1$ as the translation vector $t \in \mathbb{R}^3$:
+
+$$
+R = \begin{bmatrix} \hat{x} & \hat{y} & \hat{z} \end{bmatrix}_{3 \times 3}, \quad t = P_1
+$$
+
+$$
+T = \begin{bmatrix} R & t \\ \mathbf{0}_{1 \times 3} & 1 \end{bmatrix}_{4 \times 4}
+$$
 
 ### 2. Solving for Camera-to-Robot Frame Transformation $(T_C^R)$
 Using the above formulation, the script calculates:
@@ -137,15 +140,15 @@ Using the above formulation, the script calculates:
 
 Since the physical features are static, we compose the closed-loop coordinate transform:
 
-```math
+$$
 T_W^R = T_C^R \cdot T_W^C
-```
+$$
 
 To isolate and solve for the unknown static transformation $T_C^R$, we post-multiply by the matrix inverse of $T_W^C$:
 
-```math
+$$
 T_C^R = T_W^R \cdot (T_W^C)^{-1}
-```
+$$
 
 ---
 
