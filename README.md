@@ -28,7 +28,7 @@ targetless-calibrate --test
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 1. [Quick Start & Installation](#-quick-start--installation)
 2. [Why Targetless Calibration?](#-why-targetless-calibration)
 3. [Mathematical Foundations](#%EF%B8%8F-mathematical-foundations)
@@ -42,7 +42,7 @@ targetless-calibrate --test
 
 ---
 
-## 💡 Why Targetless Calibration?
+## Why Targetless Calibration?
 
 Traditional hand-eye calibration algorithms (e.g., standard Tsai-Lenz or Horaud-Dornaika solutions for $AX = XB$ or $AX = YB$ problems) typically require a multi-step process using 2D chessboard patterns, ChArUco grids, or circle patterns. These traditional methods introduce several engineering bottlenecks in industrial settings:
 *   **Occlusion and Workspace Constraints**: Standard targets must be entirely visible from multiple extreme angles, which is often difficult in cluttered robotic welding cells, pick-and-place stations, or confined spaces.
@@ -81,54 +81,54 @@ The calibration problem establishes a closed kinematic chain by composing homoge
 Let $P_1, P_2, P_3 \in \mathbb{R}^3$ be three non-collinear physical coordinates. We define a local, right-handed 3D coordinate system (referred to as the "World Frame" $\{W\}$) with its origin at $P_1$:
 1.  **Displacement Vectors**:
 
-    $$
+    ```math
     \vec{v}_x = P_2 - P_1
-    $$
+    ```
 
-    $$
+    ```math
     \vec{v}_{y'} = P_3 - P_1
-    $$
+    ```
 
 2.  **Collinearity Safeguard**:
     The cross product between $\vec{v}_x$ and $\vec{v}_{y'}$ determines collinearity. If the norm of the cross product approaches zero, the points lie on a straight line, and a unique 3D coordinate system cannot be resolved:
 
-    $$
+    ```math
     \vec{n}_{cross} = \vec{v}_x \times \vec{v}_{y'}
-    $$
+    ```
 
-    $$
+    ```math
     \mathrm{If\ } \|\vec{n}_{cross}\|_2 < 10^{-6} \implies \mathrm{Collinear\ (Error)}
-    $$
+    ```
 
 3.  **Orthonormal Basis Unit Vectors**:
     *   **Unit X-axis** $(\hat{x})$: Directed along the line from $P_1$ to $P_2$:
 
-        $$
+        ```math
         \hat{x} = \frac{\vec{v}_x}{\|\vec{v}_x\|_2}
-        $$
+        ```
 
     *   **Unit Z-axis** $(\hat{z})$: Perpendicular to the plane defined by the three points:
 
-        $$
+        ```math
         \hat{z} = \frac{\vec{n}_{cross}}{\|\vec{n}_{cross}\|_2}
-        $$
+        ```
 
     *   **Unit Y-axis** $(\hat{y})$: Orthogonalized completing the right-handed Cartesian coordinate system:
 
-        $$
+        ```math
         \hat{y} = \hat{z} \times \hat{x}
-        $$
+        ```
 
 4.  **Homogeneous Transformation Matrix $(T \in \mathrm{SE}(3))$**:
     By stacking the unit vectors as column vectors of the rotation matrix $R \in \mathrm{SO}(3)$ and assigning the origin point $P_1$ as the translation vector $t \in \mathbb{R}^3$:
 
-    $$
+    ```math
     R = \begin{bmatrix} \hat{x} & \hat{y} & \hat{z} \end{bmatrix}_{3 \times 3}, \quad t = P_1
-    $$
+    ```
 
-    $$
+    ```math
     T = \begin{bmatrix} R & t \\ \mathbf{0}_{1 \times 3} & 1 \end{bmatrix}_{4 \times 4}
-    $$
+    ```
 
 ### 2. Solving for Camera-to-Robot Frame Transformation $(T_C^R)$
 Using the above formulation, the script calculates:
@@ -137,15 +137,15 @@ Using the above formulation, the script calculates:
 
 Since the physical features are static, we compose the closed-loop coordinate transform:
 
-$$
+```math
 T_W^R = T_C^R \cdot T_W^C
-$$
+```
 
 To isolate and solve for the unknown static transformation $T_C^R$, we post-multiply by the matrix inverse of $T_W^C$:
 
-$$
+```math
 T_C^R = T_W^R \cdot (T_W^C)^{-1}
-$$
+```
 
 ---
 
